@@ -1,18 +1,24 @@
+import Link from "next/link"
 export default function Sidebar(){
     return (
         <aside>
             <h2>Explore</h2>
-            <nav>
-                <p>Home</p>
-                <p>Popular</p>
+            <nav className = "mt-4 flex flex-col gap-2">
+                <Link href = "/">Home</Link>
 
-                <h3>Lounges</h3>
+                <h3 className = "mt-4 font-semibold">Lounges</h3>
 
-                <p>Web Development</p>
-                <p>Systems</p>
-                <p>AI / ML</p>
-                <p>Cloud</p>
-                <p>DSA</p>
+                <Link href = "/lounges/systems">
+                    Systems
+                </Link>
+
+                <Link href = "/lounges/cloud">
+                    Cloud
+                </Link>
+
+                <Link href = "/lounges/databases">
+                    Databases
+                </Link>
             </nav>
         </aside>
     )
