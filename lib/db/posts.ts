@@ -49,3 +49,28 @@ export async function createPost({
     )
     return result.rows[0]
 }
+
+export async function getPostsByLoungeSlug(
+    slug: string
+): Promise<Post[]>{
+    const result = await pool.query(
+        `
+        SELECT 
+            posts.id,
+            posts.title,
+            users.username AS author,
+            lounges.name AS lounge,
+            0 AS votes,
+            0 as comments
+        FROM posts
+        JOIN users
+        ON posts.author_id = users.id
+        JOIN lounges
+        ON posts.lounge_id = lounges.id
+        WHERE lounges.slug = $1
+        ORDER BY posts.created_at DESC
+        `,
+        [slug]
+    )
+    return result.rows
+}
