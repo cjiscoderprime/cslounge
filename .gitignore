@@ -34,9 +34,16 @@ yarn-error.log*
 .env*
 .env.local
 
+LEARNING_README.md
+PROJECT_STATE.md
+backend/src/main/resources/application.properties
+
+
 # vercel
 .vercel
 
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+

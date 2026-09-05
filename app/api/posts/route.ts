@@ -1,18 +1,24 @@
-import { createPost, getPosts } from "@/lib/db/posts";
-
-export async function GET(){
+export async function GET() {
     try {
-        const posts = await getPosts()
+        const response = await fetch("http://localhost:8080/posts", {
+            cache: "no-store",
+        })
+
+        if (!response.ok) {
+            throw new Error("Spring backend failed to load posts")
+        }
+
+        const posts = await response.json()
 
         return Response.json({
             data: posts,
         })
-    } catch(error){
+    } catch (error) {
         console.error(error)
 
         return Response.json(
             {
-                error:{
+                error: {
                     message: "Failed to load posts",
                 },
             },
@@ -24,12 +30,12 @@ export async function GET(){
 }
 
 export async function POST(request: Request){
-    try {
+    try{
         const body = await request.json()
 
-        const { title, content, loungeId } = body
+        const { title, loungeId, content} = body
 
-        if (!title || !content || !loungeId ){
+        if (!title || !content || !loungeId){
             return Response.json(
                 {
                     error: {
@@ -41,28 +47,38 @@ export async function POST(request: Request){
                 }
             )
         }
-        
-        const post = await createPost({
-            authorId: "1",
-            loungeId,
+    const response = await fetch("http://localhost:8080/posts", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            authorId: 1,
+            loungeId: Number(loungeId),
             title,
-            content,
-        })
+            content
+        }),
+    })
+    if(!response.ok){
+        throw new Error("Spring backend failed to create post")
+    }
 
-        return Response.json(
-            {
-                data: post,
-            },
-            {
-                status: 201,
-            }
-        )
-    } catch (error){
-        console.error(error)
-    
+    const post = await response.json()
+
     return Response.json(
         {
-            error: {
+            data: post,
+        },
+        {
+            status: 201,
+        }
+    )
+} catch(error){
+    console.error(error)
+
+    return Response.json(
+        {
+            error:{
                 message: "Failed to create post",
             },
         },

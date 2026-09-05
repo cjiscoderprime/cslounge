@@ -4,7 +4,8 @@ import Sidebar from "@/components/layout/Sidebar"
 import RightSidebar from "@/components/layout/RightSidebar"
 import PostCard from "@/components/posts/PostCard"
 
-import { getLoungebySlug } from "@/lib/db/lounges"
+import type { Lounge } from "@/types/lounge"
+
 import { getPostsByLoungeSlug } from "@/lib/db/posts"
 
 type LoungePageProps = {
@@ -18,14 +19,24 @@ export default async function LoungePage({
 }: LoungePageProps){
     const {slug} = await params
 
-    const [lounge, posts] = await Promise.all([
-        getLoungebySlug(slug),
+    const [loungeResponse, posts] = await Promise.all([
+        fetch(`http://localhost:3000/api/lounges/${slug}`,{
+            cache: "no-store",
+        }),
         getPostsByLoungeSlug(slug),
     ])
 
-    if(!lounge){
+    if (loungeResponse.status === 404){
         notFound()
     }
+
+    if(!loungeResponse.ok){
+        throw new Error("Failed to load Lounge")
+    }
+
+    const loungeJson: { data: Lounge } = await loungeResponse.json() 
+    const lounge = loungeJson.data
+
     return (
         <>
         <Navbar/>
