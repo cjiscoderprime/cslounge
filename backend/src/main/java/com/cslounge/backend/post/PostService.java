@@ -27,6 +27,21 @@ public class PostService {
         .toList();
     }
 
+    public List<PostFeedResponse> getPostsByLoungeSlug(String slug){
+        return postRepository.findFeedPostsByLoungeSlug(slug)
+        .stream()
+        .map(row -> new PostFeedResponse(
+            row.getId(),
+            row.getTitle(),
+            row.getContent(),
+            row.getAuthor(),
+            row.getLounge(),
+            row.getVotes(),
+            row.getComments()
+        ))
+        .toList();
+    }
+
     public Post createPost(CreatePostRequest request){
         Post post = new Post(
             request.authorId(),
@@ -36,13 +51,4 @@ public class PostService {
         );
         return postRepository.save(post);
     }
-
-
-
-
-
-
-
-
-
 }

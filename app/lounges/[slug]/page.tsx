@@ -6,8 +6,15 @@ import PostCard from "@/components/posts/PostCard"
 
 import type { Lounge } from "@/types/lounge"
 
-import { getPostsByLoungeSlug } from "@/lib/db/posts"
-
+type PostFeedItem = {
+    id: number
+    title:string 
+    content:string
+    author: string
+    lounge: string
+    votes: number
+    comments: number
+}
 type LoungePageProps = {
     params: Promise<{
         slug:string
@@ -19,11 +26,13 @@ export default async function LoungePage({
 }: LoungePageProps){
     const {slug} = await params
 
-    const [loungeResponse, posts] = await Promise.all([
+    const [loungeResponse, postsResponse] = await Promise.all([
         fetch(`http://localhost:3000/api/lounges/${slug}`,{
             cache: "no-store",
         }),
-        getPostsByLoungeSlug(slug),
+        fetch(`http://localhost:3000/api/posts?slug=${encodeURIComponent(slug)}`, {
+            cache: "no-store",
+        }),
     ])
 
     if (loungeResponse.status === 404){
@@ -36,6 +45,13 @@ export default async function LoungePage({
 
     const loungeJson: { data: Lounge } = await loungeResponse.json() 
     const lounge = loungeJson.data
+
+    if(!postsResponse.ok){
+        throw new Error("Failed to load lounge posts")
+    }
+
+    const postsJson: { data: PostFeedItem[]} = await postsResponse.json()
+    const posts = postsJson.data
 
     return (
         <>

@@ -1,21 +1,26 @@
-export async function GET() {
-    try {
-        const response = await fetch("http://localhost:8080/posts", {
+export async function GET(request: Request){
+    try{
+        const { searchParams } = new URL(request.url)
+        const slug  = searchParams.get("slug")
+
+        const springUrl = slug
+            ?`http://localhost:8080/posts/by-lounge?slug=${encodeURIComponent(slug)}`
+            :"http://localhost:8080/posts"
+
+        const response = await fetch(springUrl, {
             cache: "no-store",
         })
 
-        if (!response.ok) {
+        if(!response.ok){
             throw new Error("Spring backend failed to load posts")
         }
-
         const posts = await response.json()
 
         return Response.json({
             data: posts,
         })
-    } catch (error) {
+    } catch(error){
         console.error(error)
-
         return Response.json(
             {
                 error: {

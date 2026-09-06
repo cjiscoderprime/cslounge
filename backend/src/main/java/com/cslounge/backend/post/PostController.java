@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.http.HttpStatus;
 
+import org.springframework.web.bind.annotation.RequestParam;
+
 @RestController
 @RequestMapping("/posts")
 
@@ -24,6 +26,13 @@ public class PostController {
     @GetMapping
     public List<PostFeedResponse> getPosts(){
         return postService.getAllPosts();
+    }
+
+    @GetMapping("/by-lounge")
+    public List<PostFeedResponse> getPostsByLounge(
+        @RequestParam String slug
+    ){
+        return postService.getPostsByLoungeSlug(slug);
     }
 
     @PostMapping
