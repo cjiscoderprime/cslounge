@@ -33,4 +33,13 @@ public class LoungeService {
         ))
         .orElse(null);
     }
+
+
+    public Lounge createLounge(CreateLoungeRequest request){
+        Lounge lounge = new Lounge(
+            request.name(),
+            request.slug()
+        );
+        return loungeRepository.save(lounge);
+    }
 }

@@ -12,6 +12,14 @@ import org.springframework.http.ResponseEntity;
 
 import org.springframework.web.bind.annotation.PathVariable;
 
+import org.springframework.web.bind.annotation.PostMapping;
+
+import org.springframework.web.bind.annotation.RequestBody;
+
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+import org.springframework.http.HttpStatus;
+
 @RestController
 @RequestMapping("/lounges")
 public class LoungeController {
@@ -38,6 +46,14 @@ public class LoungeController {
         }
 
         return ResponseEntity.ok(lounge);
+    }
+
+    @PostMapping 
+    @ResponseStatus(HttpStatus.CREATED)
+    public Lounge createLounge(
+        @RequestBody CreateLoungeRequest request
+    ){
+        return loungeService.createLounge(request);
     }
 }
 

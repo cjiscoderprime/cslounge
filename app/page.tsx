@@ -6,6 +6,9 @@ import PostCard from "@/components/posts/PostCard"
 
 import CreatePostForm from "@/components/posts/CreatePostForm"
 import type {Lounge} from "@/types/lounge"
+
+import CreateLoungeForm from "@/components/lounges/CreateLoungeForm"
+
 type PostFeedItem = {
   id: number
   title: string
@@ -55,6 +58,8 @@ const lounges = loungesJson.data
       <p className = "mt-2">
         Backend says: {message}
       </p>
+
+      <CreateLoungeForm/>
 
       <CreatePostForm lounges={lounges}/>
 
