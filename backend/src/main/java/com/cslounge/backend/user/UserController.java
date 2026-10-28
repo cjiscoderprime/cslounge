@@ -34,4 +34,20 @@ public class UserController {
                 .body(error.getMessage());
         }
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> loginUser(
+        @RequestBody LoginUserRequest request
+    ) {
+        try {
+            UserResponse user = userService.loginUser(request);
+
+            return ResponseEntity.ok(user);
+            
+        } catch (IllegalArgumentException error) {
+            return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(error.getMessage());
+        }
+    }
 }

@@ -36,4 +36,25 @@ public class UserService {
             savedUser.getUsername()
         );
     }
+
+    public UserResponse loginUser(LoginUserRequest request) {
+        User user = userRepository.findByUsername(request.username())
+        .orElseThrow(() -> 
+            new IllegalArgumentException("Invalid username or password")
+        );
+    if (
+        user.getPasswordHash() == null || 
+        !passwordEncoder.matches(
+            request.password(),
+            user.getPasswordHash()
+        )
+    ) {
+        throw new IllegalArgumentException("Invalid username or password");
+    }
+
+    return new UserResponse(
+        user.getId(),
+        user.getUsername()
+    );
+    }
 }
