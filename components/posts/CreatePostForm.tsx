@@ -55,86 +55,101 @@ export default function CreatePostForm({
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="mt-6 rounded-lg border p-4"
-    >
-      <h2 className="text-lg font-semibold">Create Post</h2>
+  <form
+    onSubmit={handleSubmit}
+    className="app-surface mt-6 rounded-2xl p-5"
+  >
+    <div className="flex items-center justify-between">
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-neutral-500">
+          Start a discussion
+        </p>
 
-      <div className="mt-4">
-        <label
-          htmlFor="lounge"
-          className="block text-sm font-medium"
-        >
-          Lounge
-        </label>
+        <h2 className="mt-1 text-lg font-semibold text-white">
+          Create Post
+        </h2>
+      </div>
+    </div>
 
-        <select
-          id="lounge"
-          value={loungeId}
-          onChange={(event) => setLoungeId(event.target.value)}
-          className="mt-1 w-full rounded border p-2"
-        >
+    <div className="mt-5">
+      <label
+        htmlFor="lounge"
+        className="block text-sm font-medium text-neutral-300"
+      >
+        Lounge
+      </label>
+
+      <select
+        id="lounge"
+        value={loungeId}
+        onChange={(event) => setLoungeId(event.target.value)}
+        className="mt-2 w-full rounded-xl border border-white/10 px-3 py-2.5 text-sm"
+      >
         {lounges.map((lounge) => (
-        <option 
-          key = {lounge.id}
-          value = {lounge.id}
-        > {lounge.name}
-        </option>
+          <option
+            key={lounge.id}
+            value={lounge.id}
+          >
+            {lounge.name}
+          </option>
         ))}
-        </select>
-      </div>
+      </select>
+    </div>
 
-      <div className="mt-4">
-        <label
-          htmlFor="title"
-          className="block text-sm font-medium"
-        >
-          Title
-        </label>
+    <div className="mt-4">
+      <label
+        htmlFor="title"
+        className="block text-sm font-medium text-neutral-300"
+      >
+        Title
+      </label>
 
-        <input
-          id="title"
-          type="text"
-          value={title}
-          onChange={(event) => setTitle(event.target.value)}
-          className="mt-1 w-full rounded border p-2"
-          placeholder="What do you want to discuss?"
-          required
-        />
-      </div>
+      <input
+        id="title"
+        type="text"
+        value={title}
+        onChange={(event) => setTitle(event.target.value)}
+        className="mt-2 w-full rounded-xl border border-white/10 px-3 py-2.5 text-sm"
+        placeholder="What do you want to discuss?"
+        required
+      />
+    </div>
 
-      <div className="mt-4">
-        <label
-          htmlFor="content"
-          className="block text-sm font-medium"
-        >
-          Content
-        </label>
+    <div className="mt-4">
+      <label
+        htmlFor="content"
+        className="block text-sm font-medium text-neutral-300"
+      >
+        Content
+      </label>
 
-        <textarea
-          id="content"
-          value={content}
-          onChange={(event) => setContent(event.target.value)}
-          className="mt-1 min-h-28 w-full rounded border p-2"
-          placeholder="Add some context..."
-          required
-        />
-      </div>
+      <textarea
+        id="content"
+        value={content}
+        onChange={(event) => setContent(event.target.value)}
+        className="mt-2 min-h-32 w-full resize-y rounded-xl border border-white/10 px-3 py-3 text-sm"
+        placeholder="Add some context..."
+        required
+      />
+    </div>
 
-      {error && (
-        <p className="mt-3 text-sm text-red-600">
+    {error && (
+      <div className="mt-4 rounded-xl border border-red-500/20 bg-red-500/10 px-3 py-2">
+        <p className="text-sm text-red-400">
           {error}
         </p>
-      )}
+      </div>
+    )}
 
+    <div className="mt-5 flex justify-end">
       <button
         type="submit"
         disabled={isSubmitting}
-        className="mt-4 rounded border px-4 py-2 disabled:opacity-50"
+        className="rounded-xl bg-[#c8102e] px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#c8102e]/10 hover:bg-[#e61d3f] disabled:cursor-not-allowed disabled:opacity-50"
       >
         {isSubmitting ? "Posting..." : "Create Post"}
       </button>
-    </form>
+    </div>
+  </form>
   );
 }

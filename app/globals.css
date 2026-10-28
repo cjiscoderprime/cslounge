@@ -1,26 +1,376 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #15191e;
+  --background-soft: #191f25;
+
+  --surface: #1d232a;
+  --surface-hover: #242b33;
+
+  --foreground: #f4f6f8;
+  --muted: #9aa4af;
+  --muted-dark: #6f7a85;
+
+  --border: #303943;
+  --border-soft: rgba(255, 255, 255, 0.07);
+
+  --accent: #5ea8ff;
+  --accent-bright: #78b7ff;
+  --accent-soft: rgba(94, 168, 255, 0.12);
+
+  --violet: #7c6cf2;
+  --violet-soft: rgba(124, 108, 242, 0.12);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--background);
+}
+
+/* ------------------------------
+   Ambient background movement
+------------------------------ */
+body {
+  min-height: 100vh;
+  margin: 0;
+  overflow-x: hidden;
+
+  background:
+    radial-gradient(
+      circle at 12% 14%,
+      rgba(255, 166, 0, 0.14),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at 88% 82%,
+      rgba(255, 120, 0, 0.08),
+      transparent 30%
+    ),
+    linear-gradient(
+      180deg,
+      #090909 0%,
+      #0b0d10 48%,
+      #090909 100%
+    );
+
+  color: var(--foreground);
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  background-attachment: fixed;
+}
+
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  inset: auto;
+  pointer-events: none;
+  z-index: -1;
+  border-radius: 9999px;
+  filter: blur(130px);
+  opacity: 0.16;
+}
+
+body::before {
+  width: 560px;
+  height: 560px;
+  top: -180px;
+  left: -140px;
+  background: rgba(255, 166, 0, 0.65);
+  animation: floatGlowLeft 18s ease-in-out infinite alternate;
+}
+
+body::after {
+  width: 520px;
+  height: 520px;
+  right: -160px;
+  bottom: -180px;
+  background: rgba(255, 102, 0, 0.45);
+  animation: floatGlowRight 22s ease-in-out infinite alternate;
+}
+
+@keyframes floatGlowLeft {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  50% {
+    transform: translate3d(80px, 60px, 0) scale(1.08);
+  }
+
+  100% {
+    transform: translate3d(40px, 140px, 0) scale(0.96);
   }
 }
 
-body {
-  background: var(--background);
+@keyframes floatGlowRight {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  50% {
+    transform: translate3d(-70px, -50px, 0) scale(1.1);
+  }
+
+  100% {
+    transform: translate3d(-30px, -120px, 0) scale(0.98);
+  }
+}
+
+/* ------------------------------
+   Reusable surfaces
+------------------------------ */
+
+.app-surface {
+  background: rgba(29, 35, 42, 0.94);
+
+  border: 1px solid var(--border);
+
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.14);
+
+  transition:
+    transform 200ms ease,
+    border-color 200ms ease,
+    background 200ms ease,
+    box-shadow 200ms ease;
+}
+
+.app-surface:hover {
+  background: var(--surface-hover);
+
+  border-color: #3b4652;
+
+  box-shadow:
+    0 14px 34px rgba(0, 0, 0, 0.18);
+}
+
+/* ------------------------------
+   Inputs
+------------------------------ */
+
+input,
+textarea,
+select {
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+
+  background: #181d22;
+
+  border-color: var(--border);
+
+  outline: none;
+
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    background 160ms ease;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #69737d;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--accent);
+
+  box-shadow:
+    0 0 0 3px rgba(94, 168, 255, 0.12);
+
+  background: #1a2026;
+}
+
+/* ------------------------------
+   Buttons
+------------------------------ */
+
+button {
+  cursor: pointer;
+
+  transition:
+    transform 150ms ease,
+    background 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* ------------------------------
+   Links
+------------------------------ */
+
+a {
+  transition:
+    color 150ms ease,
+    background 150ms ease,
+    border-color 150ms ease,
+    transform 150ms ease;
+}
+
+/* ------------------------------
+   Page entrance
+------------------------------ */
+
+.page-enter {
+  animation: pageEnter 450ms ease-out both;
+}
+
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ------------------------------
+   Feed card entrance
+------------------------------ */
+
+.feed-card {
+  animation: cardEnter 380ms ease-out both;
+}
+
+@keyframes cardEnter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ------------------------------
+   Animated brand title
+   For login/register later
+------------------------------ */
+
+.animated-brand-title {
+  background: linear-gradient(
+    90deg,
+    #ffffff 0%,
+    #ffffff 30%,
+    var(--accent-bright) 50%,
+    #ffffff 70%,
+    #ffffff 100%
+  );
+
+  background-size: 220% auto;
+
+  color: transparent;
+
+  background-clip: text;
+  -webkit-background-clip: text;
+
+  animation: titleSweep 4.5s linear infinite;
+}
+
+@keyframes titleSweep {
+  from {
+    background-position: 200% center;
+  }
+
+  to {
+    background-position: -20% center;
+  }
+}
+
+/* ------------------------------
+   Selection
+------------------------------ */
+
+::selection {
+  background: rgba(94, 168, 255, 0.28);
+  color: white;
+}
+
+/* ------------------------------
+   Scrollbar
+------------------------------ */
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #12161a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #36404a;
+
+  border-radius: 9999px;
+
+  border: 2px solid #12161a;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #46515d;
+}
+
+/* ------------------------------
+   Utility accents
+------------------------------ */
+
+.accent-text {
+  color: var(--accent);
+}
+
+.accent-surface {
+  background: var(--accent-soft);
+  border-color: rgba(94, 168, 255, 0.22);
+}
+
+.violet-surface {
+  background: var(--violet-soft);
+  border-color: rgba(124, 108, 242, 0.22);
+}
+
+/* ------------------------------
+   Motion accessibility
+------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+
+    transition-duration: 0.01ms !important;
+  }
 }

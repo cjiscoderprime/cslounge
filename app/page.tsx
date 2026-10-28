@@ -43,43 +43,69 @@ const lounges = loungesJson.data
 
   return (
     <>
-    <Navbar/>
+      <Navbar />
 
-    <div className = "grid grid-cols-[220px_1fr_280px] gap-6 p-6">
-    <Sidebar/>
+      <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-6 px-4 py-6 lg:grid-cols-[220px_minmax(0,1fr)_280px] lg:px-6">
+        <div className="hidden lg:block">
+          <Sidebar />
+        </div>
 
-    <main>
-      <h1 className = "text-2xl font-bold">Home</h1>
+        <main className="page-enter min-w-0">
+          <section className="mb-6">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#e61d3f]">
+              CSLounge
+            </p>
 
-      <p className = "mt-2">
-        Discussions from across CSLounge
-      </p>
+            <h1 className="mt-2 text-1xl font-bold tracking-tight text-white">
+              Discussions from across the community
+            </h1>
 
-      <p className = "mt-2">
-        Backend says: {message}
-      </p>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-neutral-400">
+              Explore conversations, share ideas, and connect with developers
+              across different areas of computer science.
+            </p>
+          </section>
 
-      <CreateLoungeForm/>
+          <CreateLoungeForm />
 
-      <CreatePostForm lounges={lounges}/>
+          <CreatePostForm lounges={lounges} />
 
-      <div className = "mt-6 flex flex-col gap-4">
-        {posts.map((post) => (
-          <PostCard
-            key = {post.id}
-            title = {post.title}
-            author = {post.author}
-            lounge = {post.lounge}
-            votes = {post.votes}
-            comments = {post.comments}
-            />
-        ))}
-      
+          <section className="mt-8">
+            <div className="mb-4 flex items-center justify-between">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-neutral-500">
+                  Feed
+                </p>
+
+                <h2 className="mt-1 text-lg font-semibold text-white">
+                  Latest Discussions
+                </h2>
+              </div>
+
+              <span className="text-xs text-neutral-600">
+                {posts.length} posts
+              </span>
+            </div>
+
+            <div className="flex flex-col gap-4">
+              {posts.map((post) => (
+                <PostCard
+                  key={post.id}
+                  title={post.title}
+                  author={post.author}
+                  lounge={post.lounge}
+                  votes={post.votes}
+                  comments={post.comments}
+                />
+              ))}
+            </div>
+          </section>
+        </main>
+
+        <div className="hidden lg:block">
+          <RightSidebar />
+        </div>
       </div>
-    </main>
-
-    <RightSidebar/>
-    </div>
     </>
   )
 }
