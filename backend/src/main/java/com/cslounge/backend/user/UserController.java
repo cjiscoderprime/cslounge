@@ -7,6 +7,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.web.bind.annotation.GetMapping;
+
 @RestController 
 @RequestMapping("/users")
 public class UserController {
@@ -37,10 +41,16 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(
-        @RequestBody LoginUserRequest request
+        @RequestBody LoginUserRequest request,
+        HttpServletRequest httpRequest
     ) {
         try {
             UserResponse user = userService.loginUser(request);
+
+            HttpSession session = httpRequest.getSession(true);
+
+            session.setAttribute("userId", user.id());
+            session.setAttribute("username", user.username());
 
             return ResponseEntity.ok(user);
             
@@ -49,5 +59,35 @@ public class UserController {
                 .status(HttpStatus.UNAUTHORIZED)
                 .body(error.getMessage());
         }
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logoutUser(
+        HttpSession session
+    ) {
+        session.invalidate();
+
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentUser(
+        HttpSession session
+    ) {
+        Object userId = session.getAttribute("userId");
+        Object username = session.getAttribute("username");
+
+        if (userId == null || username == null) {
+            return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body("Not logged in");
+        }
+
+        return ResponseEntity.ok(
+            new UserResponse(
+                (Long) userId,
+                (String) username
+            )
+        );
     }
 }

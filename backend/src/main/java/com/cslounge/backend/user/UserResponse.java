@@ -1,7 +1,7 @@
 package com.cslounge.backend.user;
 
 public record UserResponse(
-    Long Id,
+    Long id,
     String username
 ) { 
 }

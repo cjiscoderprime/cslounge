@@ -42,13 +42,31 @@ public class PostService {
         .toList();
     }
 
-    public Post createPost(CreatePostRequest request){
+    public Post createPost(
+        CreatePostRequest request,
+        Long authorId
+    ){
         Post post = new Post(
-            request.authorId(),
+            authorId,
             request.loungeId(),
             request.title(),
             request.content()
         );
+
         return postRepository.save(post);
+    }
+
+    public PostFeedResponse getPostById(Long id) {
+        return postRepository.findPostById(id)
+            .map(row -> new PostFeedResponse(
+                row.getId(), 
+                row.getTitle(), 
+                row.getContent(), 
+                row.getAuthor(), 
+                row.getLounge(),
+                row.getVotes(), 
+                row.getComments()
+            ))
+            .orElse(null);
     }
 }
