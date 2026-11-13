@@ -11,4 +11,6 @@ public interface CommentRow {
     String getAuthor();
 
     Instant getCreatedAt();
+    
+    Long getVotes();
 }

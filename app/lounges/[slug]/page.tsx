@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation"
 import Navbar from "@/components/layout/Navbar"
-import Sidebar from "@/components/layout/Sidebar"
 import RightSidebar from "@/components/layout/RightSidebar"
 import PostCard from "@/components/posts/PostCard"
 
@@ -56,8 +55,7 @@ export default async function LoungePage({
     return (
         <>
         <Navbar/>
-        <div className="grid grid-cols-[220px_1fr_280px] gap-6 p-6">
-            <Sidebar/>
+        <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-8 px-6 py-8 lg:grid-cols-[minmax(0,1fr)_300px]">
         <main>
             <h1 className = "text-2xl font-bold">
                 {lounge.name}
@@ -71,6 +69,7 @@ export default async function LoungePage({
                     posts.map((post) => (
                         <PostCard
                         key = {post.id}
+                        id = {post.id}
                         title = {post.title}
                         author = {post.author}
                         lounge = {post.lounge}

@@ -24,7 +24,8 @@ public class CommentService {
                 row.getId(),
                 row.getContent(),
                 row.getAuthor(),
-                row.getCreatedAt()
+                row.getCreatedAt(),
+                row.getVotes()
             ))
             .toList();
     }

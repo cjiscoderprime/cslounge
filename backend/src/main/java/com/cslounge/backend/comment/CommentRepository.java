@@ -14,11 +14,19 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
                 c.id AS id,
                 c.content AS content,
                 u.username AS author,
-                c.created_at AS "createdAt"
+                c.created_at AS "createdAt",
+                COALESCE(SUM(cv.value), 0)::bigint AS votes
             FROM comments c
             JOIN users u
                 ON c.author_id = u.id
+            LEFT JOIN comment_votes cv
+                ON c.id = cv.comment_id
             WHERE c.post_id = :postId
+            GROUP BY 
+                c.id,
+                c.content,
+                u.username,
+                c.created_at
             ORDER BY c.created_at ASC
             """,
             nativeQuery = true

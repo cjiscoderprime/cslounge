@@ -25,3 +25,7 @@ Each weekly entry should cover:
 ## Weekly entries
 
 Future weekly deep-dive notes will be appended below this line.
+
+## Personal Notes
+
+Pom.xml is the project configuration file for Maven, it tells what your Java/Spring project is, which dependencies does the project need, which java version to use, and how to build/run it.

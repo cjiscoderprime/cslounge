@@ -1,4 +1,7 @@
+import Link from "next/link"
+
 type PostCardProps = {
+  id: number
   title: string
   author: string
   lounge: string
@@ -7,6 +10,7 @@ type PostCardProps = {
 }
 
 export default function PostCard({
+  id,
   title,
   author,
   lounge,
@@ -14,42 +18,95 @@ export default function PostCard({
   comments,
 }: PostCardProps) {
   return (
-    <article className="feed-card group rounded-2xl border border-white/10 bg-white/[0.03] p-5 backdrop-blur-sm transition duration-200 hover:-translate-y-0.5 hover:border-[#c8102e]/40 hover:bg-white/[0.05]">
-      <div className="flex items-center gap-2 text-xs text-neutral-500">
-        <span className="rounded-full bg-[#c8102e]/10 px-2.5 py-1 font-medium text-[#e61d3f]">
-          {lounge}
-        </span>
+    <Link
+      href={`/posts/${id}`}
+      className="block"
+    >
+      <article className="feed-card rounded-2xl p-6">
 
-        <span>•</span>
+        <div className="flex items-start justify-between gap-4">
 
-        <span>
-          Posted by{" "}
-          <span className="font-medium text-neutral-300">
-            {author}
+          <div>
+            <p
+              className="
+                text-xs
+                font-semibold
+                uppercase
+                tracking-[0.14em]
+                text-[var(--accent)]
+              "
+            >
+              {lounge}
+            </p>
+
+            <h2
+              className="
+                mt-4
+                text-xl
+                font-semibold
+                tracking-tight
+                text-[var(--foreground)]
+              "
+            >
+              {title}
+            </h2>
+
+            <p className="mt-2 text-sm text-[var(--secondary)]">
+              Posted by{" "}
+              <span className="font-medium text-[var(--accent)]">
+                {author}
+              </span>
+            </p>
+          </div>
+
+          <span
+            className="
+              rounded-md
+              bg-[var(--surface-soft)]
+              px-2.5 py-1
+              text-[11px]
+              font-medium
+              uppercase
+              tracking-wide
+              text-[var(--muted)]
+            "
+          >
+            Post
           </span>
-        </span>
-      </div>
 
-      <h2 className="mt-4 text-xl font-semibold leading-snug text-white transition group-hover:text-neutral-100">
-        {title}
-      </h2>
+        </div>
 
-      <div className="mt-5 flex items-center gap-3">
-        <button
-          type="button"
-          className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-neutral-400 hover:border-[#c8102e]/40 hover:bg-[#c8102e]/10 hover:text-[#e61d3f]"
-        >
-          <span>▲</span>
-          <span>{votes}</span>
-        </button>
+        <div className="mt-5 flex items-center gap-3">
 
-        <button
-          type="button"
-          className="rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-neutral-400 hover:bg-white/[0.06] hover:text-white"
-        >
-          {comments} Comments
-        </button>
-      </div>
-    </article>
+          <div
+            className="
+              rounded-lg
+              border border-[var(--border)]
+              bg-[var(--surface-soft)]
+              px-3 py-2
+              text-sm
+              text-[var(--foreground)]
+            "
+          >
+            ↑ {votes}
+          </div>
+
+          <div
+            className="
+              rounded-lg
+              border border-[var(--border)]
+              px-3 py-2
+              text-sm
+              text-[var(--secondary)]
+            "
+          >
+            ◯ {comments}{" "}
+            {comments === 1 ? "comment" : "comments"}
+          </div>
+
+        </div>
+
+      </article>
+    </Link>
   )
 }

@@ -6,7 +6,8 @@ public record CommentResponse(
     Long id,
     String content,
     String author,
-    Instant createdAt
+    Instant createdAt,
+    Long votes
 ) {}
 
 

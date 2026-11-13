@@ -1,13 +1,13 @@
-///app is HTTP + pages
+import { cookies } from "next/headers"
+import { redirect } from "next/navigation"
+import Link from "next/link"
+
 import Navbar from "@/components/layout/Navbar"
-import Sidebar from "@/components/layout/Sidebar"
-import RightSidebar from "@/components/layout/RightSidebar"
 import PostCard from "@/components/posts/PostCard"
-
 import CreatePostForm from "@/components/posts/CreatePostForm"
-import type {Lounge} from "@/types/lounge"
-
 import CreateLoungeForm from "@/components/lounges/CreateLoungeForm"
+
+import type { Lounge } from "@/types/lounge"
 
 type PostFeedItem = {
   id: number
@@ -19,93 +19,275 @@ type PostFeedItem = {
   comments: number
 }
 
-export default async function Home(){
+export default async function Home() {
+  const cookieStore = await cookies()
+  const sessionId = cookieStore.get("JSESSIONID")
 
-const response = await fetch("http://localhost:8080/hello",{
-    cache: "no-store",
-  })
+  if (!sessionId) {
+    redirect("/login")
+  }
 
-  const message = await response.text()
+  const authResponse = await fetch(
+    "http://localhost:8080/users/me",
+    {
+      headers: {
+        Cookie: `JSESSIONID=${sessionId.value}`,
+      },
+      cache: "no-store",
+    }
+  )
 
-  const postsResponse = await fetch("http://localhost:3000/api/posts", {
-  cache: "no-store",
-})
+  if (!authResponse.ok) {
+    redirect("/login")
+  }
 
-const postsJson: { data: PostFeedItem[] } = await postsResponse.json()
-const posts = postsJson.data
+  const currentUser = await authResponse.json()
 
-const loungesResponse = await fetch("http://localhost:3000/api/lounges", {
-  cache: "no-store",
-})
+  const postsResponse = await fetch(
+    "http://localhost:3000/api/posts",
+    {
+      cache: "no-store",
+    }
+  )
 
-const loungesJson: { data: Lounge[] } = await loungesResponse.json()
-const lounges = loungesJson.data
+  const postsJson: { data: PostFeedItem[] } =
+    await postsResponse.json()
+
+  const posts = postsJson.data.slice(0, 10)
+
+  const loungesResponse = await fetch(
+    "http://localhost:3000/api/lounges",
+    {
+      cache: "no-store",
+    }
+  )
+
+  const loungesJson: { data: Lounge[] } =
+    await loungesResponse.json()
+
+  const lounges = loungesJson.data
 
   return (
-    <>
-      <Navbar />
+  <>
+    <Navbar />
 
-      <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-6 px-4 py-6 lg:grid-cols-[220px_minmax(0,1fr)_280px] lg:px-6">
-        <div className="hidden lg:block">
-          <Sidebar />
-        </div>
+    <main className="mx-auto w-full max-w-7xl px-6 py-16">
 
-        <main className="page-enter min-w-0">
-          <section className="mb-6">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#e61d3f]">
-              CSLounge
-            </p>
+      <section className="max-w-4xl">
 
-            <h1 className="mt-2 text-1xl font-bold tracking-tight text-white">
-              Discussions from across the community
-            </h1>
+        <p
+          className="
+            text-xs
+            font-semibold
+            uppercase
+            tracking-[0.22em]
+            text-[var(--secondary)]
+          "
+        >
+          Developer community · Welcome back,{" "}
+          <span className="text-[var(--accent)]">
+            {currentUser.username}
+          </span>
+        </p>
 
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-neutral-400">
-              Explore conversations, share ideas, and connect with developers
-              across different areas of computer science.
-            </p>
-          </section>
+        <h1
+          className="
+            mt-6
+            text-5xl
+            font-bold
+            leading-[1.05]
+            tracking-[-0.04em]
+            text-[var(--foreground)]
+            md:text-6xl
+          "
+        >
+          What are developers talking
+          <br />
+          about{" "}
+          <span className="text-[var(--accent)]">
+            today?
+          </span>
+        </h1>
 
-          <CreateLoungeForm />
+        <p
+          className="
+            mt-6
+            max-w-3xl
+            text-lg
+            leading-8
+            text-[var(--secondary)]
+          "
+        >
+          Discover technical conversations,
+          exchange ideas, and learn how other
+          developers think through hard problems.
+        </p>
 
-          <CreatePostForm lounges={lounges} />
+        <details className="mt-8">
 
-          <section className="mt-8">
-            <div className="mb-4 flex items-center justify-between">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-neutral-500">
-                  Feed
-                </p>
+          <summary className="list-none">
 
-                <h2 className="mt-1 text-lg font-semibold text-white">
-                  Latest Discussions
-                </h2>
-              </div>
+            <span
+              className="
+                inline-flex
+                cursor-pointer
+                rounded-full
+                bg-[var(--accent)]
+                px-6 py-3
+                text-sm
+                font-semibold
+                text-white
+                hover:bg-[var(--accent-hover)]
+              "
+            >
+              Start a discussion →
+            </span>
 
-              <span className="text-xs text-neutral-600">
-                {posts.length} posts
-              </span>
+          </summary>
+
+          <div className="mt-6 max-w-3xl">
+            <CreatePostForm lounges={lounges} />
+          </div>
+
+        </details>
+
+      </section>
+
+      <div
+        className="
+          mt-16
+          grid
+          gap-9
+          lg:grid-cols-[minmax(0,1fr)_330px]
+        "
+      >
+
+        <section>
+
+          <div className="mb-5 flex items-center justify-between">
+
+            <h2
+              className="
+                text-3xl
+                font-semibold
+                tracking-tight
+                text-[var(--foreground)]
+              "
+            >
+              Latest discussions
+            </h2>
+
+            <span className="text-sm text-[var(--secondary)]">
+              {posts.length} posts
+            </span>
+
+          </div>
+
+          <div className="flex flex-col gap-4">
+
+            {posts.map((post) => (
+              <PostCard
+                key={post.id}
+                id={post.id}
+                title={post.title}
+                author={post.author}
+                lounge={post.lounge}
+                votes={post.votes}
+                comments={post.comments}
+              />
+            ))}
+
+          </div>
+
+        </section>
+
+        <aside>
+
+          <section
+            className="
+              overflow-hidden
+              rounded-2xl
+              border border-[var(--border)]
+              bg-[var(--surface)]
+            "
+          >
+
+            <div
+              className="
+                border-b
+                border-[var(--border)]
+                bg-[var(--surface-soft)]
+                px-5 py-4
+              "
+            >
+              <p
+                className="
+                  text-xs
+                  font-semibold
+                  uppercase
+                  tracking-[0.16em]
+                  text-[var(--secondary)]
+                "
+              >
+                <span className="mr-2 text-[var(--accent)]">
+                  ●
+                </span>
+                Trending lounges
+              </p>
             </div>
 
-            <div className="flex flex-col gap-4">
-              {posts.map((post) => (
-                <PostCard
-                  key={post.id}
-                  title={post.title}
-                  author={post.author}
-                  lounge={post.lounge}
-                  votes={post.votes}
-                  comments={post.comments}
-                />
-              ))}
-            </div>
-          </section>
-        </main>
+            <div className="p-4">
 
-        <div className="hidden lg:block">
-          <RightSidebar />
-        </div>
+              {lounges
+                .slice(0, 5)
+                .map((lounge, index) => (
+
+                  <Link
+                    key={lounge.id}
+                    href={`/lounges/${lounge.slug}`}
+                    className="
+                      flex
+                      items-center
+                      gap-4
+                      rounded-xl
+                      px-3 py-4
+                      hover:bg-[var(--surface-soft)]
+                    "
+                  >
+
+                    <span
+                      className="
+                        font-mono
+                        text-sm
+                        text-[var(--accent)]
+                      "
+                    >
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+
+                    <span
+                      className="
+                        text-sm
+                        font-medium
+                        text-[var(--foreground)]
+                      "
+                    >
+                      {lounge.name}
+                    </span>
+
+                  </Link>
+
+                ))}
+
+            </div>
+
+          </section>
+
+        </aside>
+
       </div>
-    </>
-  )
+
+    </main>
+  </>
+)
 }

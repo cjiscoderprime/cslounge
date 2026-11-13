@@ -1,3 +1,5 @@
+import { cookies } from "next/headers"
+
 export async function GET(request: Request){
     try{
         const { searchParams } = new URL(request.url)
@@ -52,18 +54,49 @@ export async function POST(request: Request){
                 }
             )
         }
+
+    const cookieStore = await cookies()
+    const sessionId = cookieStore.get("JSESSIONID")
+
+    if (!sessionId) {
+    return Response.json(
+        {
+            error: {
+                message: "You must be logged in to create a post",
+            },
+        },
+        {
+            status: 401,
+        }
+        )
+    }    
+
     const response = await fetch("http://localhost:8080/posts", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
+            Cookie: `JSESSIONID=${sessionId.value}`,
         },
         body: JSON.stringify({
-            authorId: 1,
             loungeId: Number(loungeId),
             title,
             content
         }),
     })
+
+    if (response.status == 401) {
+        return Response.json(
+            {
+                error: {
+                    message: "You must be logged in to create a post.",
+                },
+            },
+            {
+                status: 401,
+            }
+        )
+    }
+
     if(!response.ok){
         throw new Error("Spring backend failed to create post")
     }

@@ -49,9 +49,17 @@ export async function POST(request: Request) {
 
         const user = await response.json()
 
-        return Response.json({
+        const springCookie = response.headers.get("set-cookie")
+
+        const nextResponse = Response.json({
             data: user,
         })
+
+        if (springCookie) {
+            nextResponse.headers.set("set-cookie", springCookie)
+        }
+        return nextResponse
+
     } catch (error) {
         console.error(error)
 
