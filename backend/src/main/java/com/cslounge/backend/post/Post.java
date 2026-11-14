@@ -30,6 +30,8 @@ public class Post{
     @Column(name = "created_at", insertable = false, updatable = false)
     private OffsetDateTime createdAt;
 
+    protected Post() {}
+    
     public Post(Long authorId, Long loungeId, String title, String content){
     this.authorId = authorId;
     this.loungeId = loungeId;

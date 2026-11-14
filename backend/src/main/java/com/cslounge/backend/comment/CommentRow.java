@@ -6,6 +6,8 @@ public interface CommentRow {
     
     Long getId();
 
+    Long getPostId();
+
     String getContent();
 
     String getAuthor();

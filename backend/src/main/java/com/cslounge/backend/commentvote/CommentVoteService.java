@@ -35,6 +35,15 @@ public class CommentVoteService {
                 .orElse(null);
 
         if (existingVote != null) {
+
+            // Same vote again = withdraw vote
+            if (existingVote.getValue() == value) {
+                repository.delete(existingVote);
+
+                return existingVote;
+            }
+
+            // Opposite vote = change vote
             existingVote.setValue(value);
 
             return repository.save(existingVote);

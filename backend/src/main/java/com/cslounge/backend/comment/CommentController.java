@@ -19,6 +19,25 @@ public class CommentController {
         this.commentService = commentService;
     }
 
+    @GetMapping("/comments/mine")
+    public ResponseEntity<?> getMyComments(
+        HttpSession session
+    ) {
+        Object userId = session.getAttribute("userId");
+
+        if (userId == null) {
+            return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body("You must be logged in");
+        }
+
+        return ResponseEntity.ok(
+            commentService.getCommentsByAuthorId(
+                (Long) userId
+            )
+        );
+    }
+
     @GetMapping("/posts/{postId}/comments")
     public List<CommentResponse> getComments(
         @PathVariable Long postId
@@ -58,5 +77,39 @@ public class CommentController {
         return ResponseEntity
             .status(HttpStatus.CREATED)
             .body(comment);
+    }
+
+
+    @DeleteMapping("/comments/{commentId}")
+    public ResponseEntity<?> deleteComment(
+        @PathVariable Long commentId,
+        HttpSession session
+    ) {
+        Object userId = session.getAttribute("userId");
+
+        if (userId == null) {
+            return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body("You must be logged in");
+        }
+
+        try {
+            boolean deleted =
+                commentService.deleteComment(
+                    commentId,
+                    (Long) userId
+                );
+
+            if (!deleted) {
+                return ResponseEntity.notFound().build();
+            }
+
+            return ResponseEntity.noContent().build();
+
+        } catch (IllegalStateException error) {
+            return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(error.getMessage());
+        }
     }
 }

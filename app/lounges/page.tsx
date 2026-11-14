@@ -6,6 +6,8 @@ import Navbar from "@/components/layout/Navbar"
 
 import type { Lounge } from "@/types/lounge"
 
+import CreateLoungeForm from "@/components/lounges/CreateLoungeForm"
+
 export default async function LoungesPage() {
   const cookieStore = await cookies()
   const sessionId = cookieStore.get("JSESSIONID")
@@ -45,59 +47,29 @@ export default async function LoungesPage() {
   const lounges = loungesJson.data
 
   return (
-    <>
-      <Navbar />
+  <>
+    <Navbar />
 
       <main className="mx-auto w-full max-w-7xl px-6 py-16">
-
         <section className="max-w-3xl">
-          <p
-            className="
-              text-xs
-              font-semibold
-              uppercase
-              tracking-[0.22em]
-              text-[var(--secondary)]
-            "
-          >
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[var(--secondary)]">
             Community spaces
           </p>
 
-          <h1
-            className="
-              mt-5
-              text-5xl
-              font-bold
-              tracking-[-0.04em]
-              text-[var(--foreground)]
-            "
-          >
+          <h1 className="mt-5 text-5xl font-bold tracking-[-0.04em] text-[var(--foreground)]">
             Lounges
           </h1>
 
-          <p
-            className="
-              mt-5
-              max-w-2xl
-              text-lg
-              leading-8
-              text-[var(--secondary)]
-            "
-          >
-            Browse focused communities for different
-            areas of computer science and software engineering.
+          <p className="mt-5 max-w-2xl text-lg leading-8 text-[var(--secondary)]">
+            Browse focused communities for different areas of computer science and software engineering.
           </p>
         </section>
 
-        <section
-          className="
-            mt-12
-            grid
-            gap-4
-            sm:grid-cols-2
-            lg:grid-cols-3
-          "
-        >
+        <div className="mt-10 max-w-2xl">
+          <CreateLoungeForm />
+        </div>
+
+        <section className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {lounges.map((lounge) => (
             <Link
               key={lounge.id}
@@ -110,42 +82,20 @@ export default async function LoungesPage() {
                 hover:border-[var(--border-strong)]
               "
             >
-              <p
-                className="
-                  text-xs
-                  font-semibold
-                  uppercase
-                  tracking-[0.14em]
-                  text-[var(--accent)]
-                "
-              >
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--accent)]">
                 Lounge
               </p>
 
-              <h2
-                className="
-                  mt-3
-                  text-xl
-                  font-semibold
-                  text-[var(--foreground)]
-                "
-              >
+              <h2 className="mt-3 text-xl font-semibold text-[var(--foreground)]">
                 {lounge.name}
               </h2>
 
-              <p
-                className="
-                  mt-4
-                  text-sm
-                  text-[var(--secondary)]
-                "
-              >
+              <p className="mt-4 text-sm text-[var(--secondary)]">
                 View discussions →
               </p>
             </Link>
           ))}
         </section>
-
       </main>
     </>
   )

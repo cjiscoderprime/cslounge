@@ -48,12 +48,35 @@ public class LoungeController {
         return ResponseEntity.ok(lounge);
     }
 
-    @PostMapping 
-    @ResponseStatus(HttpStatus.CREATED)
-    public Lounge createLounge(
+    @PostMapping
+    public ResponseEntity<?> createLounge(
         @RequestBody CreateLoungeRequest request
-    ){
-        return loungeService.createLounge(request);
+    ) {
+        try {
+            Lounge lounge =
+                loungeService.createLounge(request);
+
+            return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(lounge);
+
+        } catch (IllegalArgumentException error) {
+
+            String message = error.getMessage();
+
+            if (
+                message != null &&
+                message.contains("already exists")
+            ) {
+                return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .body(message);
+            }
+
+            return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(message);
+        }
     }
 }
 

@@ -133,9 +133,9 @@ export default function Navbar() {
             <Link
               href="/account"
               className="
-                px-2
-                text-sm font-medium
+                font-medium
                 text-[var(--accent)]
+                hover:underline
               "
             >
               @{username}

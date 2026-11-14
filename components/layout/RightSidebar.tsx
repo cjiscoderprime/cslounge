@@ -1,49 +1,112 @@
-export default function RightSidebar() {
-  const popularLounges = [
-    "Web Development",
-    "Systems",
-    "Cloud",
-    "AI / ML",
-  ]
+import Link from "next/link"
+
+type Lounge = {
+  id: number
+  name: string
+  slug: string
+}
+
+export default async function RightSidebar() {
+  const response = await fetch(
+    "http://localhost:8080/lounges",
+    {
+      cache: "no-store",
+    }
+  )
+
+  if (!response.ok) {
+    return null
+  }
+
+  const lounges: Lounge[] = await response.json()
+
+  const displayedLounges = lounges.slice(0, 5)
 
   return (
-    <aside className="app-surface h-fit rounded-2xl p-4">
+    <aside
+      className="
+        self-start
+        h-fit
+        rounded-2xl
+        border border-[var(--border)]
+        bg-[var(--surface)]
+        p-6
+      "
+    >
       <div className="flex items-center justify-between">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-neutral-500">
-            Trending
-          </p>
+        <p
+          className="
+            text-xs
+            font-semibold
+            uppercase
+            tracking-[0.22em]
+            text-[var(--secondary)]
+          "
+        >
+          Trending lounges
+        </p>
 
-          <h2 className="mt-1 text-base font-semibold text-white">
-            Popular Lounges
-          </h2>
-        </div>
-
-        <span className="rounded-full bg-[#c8102e]/15 px-2 py-1 text-xs font-medium text-[#e61d3f]">
+        <span
+          className="
+            rounded-full
+            bg-[var(--accent-soft)]
+            px-3 py-1
+            text-xs
+            font-medium
+            text-[var(--accent)]
+          "
+        >
           Live
         </span>
       </div>
 
-      <div className="mt-4 flex flex-col gap-2">
-        {popularLounges.map((lounge, index) => (
-          <div
-            key={lounge}
-            className="group flex items-center gap-3 rounded-xl px-3 py-3 transition hover:bg-white/5"
+      <div className="mt-6 space-y-5">
+        {displayedLounges.map((lounge, index) => (
+          <Link
+            key={lounge.id}
+            href={`/lounges/${lounge.slug}`}
+            className="
+              flex
+              items-start
+              gap-4
+              rounded-xl
+              p-2
+              transition
+              hover:bg-[var(--surface-soft)]
+            "
           >
-            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/5 text-xs font-semibold text-neutral-500 transition group-hover:bg-[#c8102e]/15 group-hover:text-[#e61d3f]">
-              {index + 1}
+            <span
+              className="
+                mt-0.5
+                text-sm
+                font-medium
+                text-[var(--accent)]
+              "
+            >
+              {String(index + 1).padStart(2, "0")}
             </span>
 
             <div>
-              <p className="text-sm font-medium text-neutral-300 transition group-hover:text-white">
-                {lounge}
+              <p
+                className="
+                  font-medium
+                  text-[var(--foreground)]
+                "
+              >
+                {lounge.name}
               </p>
 
-              <p className="mt-0.5 text-xs text-neutral-600">
+              <p
+                className="
+                  mt-1
+                  text-sm
+                  text-[var(--secondary)]
+                "
+              >
                 Active discussions
               </p>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </aside>

@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
+
 
 type Comment = {
   id: number
@@ -188,9 +190,16 @@ export default function PostInteractions({
         "
       >
         <div className="flex items-center gap-2 text-sm text-[var(--secondary)]">
-          <span className="font-medium text-[var(--accent)]">
+          <Link
+            href={`/lounges/${lounge.toLowerCase().replace(/\s+/g, "-")}`}
+            className="
+              font-medium
+              text-[var(--accent)]
+              hover:underline
+            "
+          >
             {lounge}
-          </span>
+          </Link>
 
           <span>•</span>
 
