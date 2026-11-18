@@ -74,7 +74,7 @@ export default function CreatePostForm({
     <div className="mt-5">
       <label
         htmlFor="lounge"
-        className="block text-sm font-medium text-neutral-300"
+        className="block text-sm font-medium text-[var(--foreground)]"
       >
         Lounge
       </label>
@@ -99,7 +99,7 @@ export default function CreatePostForm({
     <div className="mt-4">
       <label
         htmlFor="title"
-        className="block text-sm font-medium text-neutral-300"
+        className="block text-sm font-medium text-[var(--foreground)]"
       >
         Title
       </label>
@@ -118,7 +118,7 @@ export default function CreatePostForm({
     <div className="mt-4">
       <label
         htmlFor="content"
-        className="block text-sm font-medium text-neutral-300"
+        className="block text-sm font-medium text-[var(--foreground)]"
       >
         Content
       </label>
