@@ -4,7 +4,7 @@ import { BACKEND_URL } from "@/lib/backend"
 
 export async function GET() {
   const response = await fetch(
-    `{BACKEND_URL}/lounges`,
+    `${BACKEND_URL}/lounges`,
     {
       cache: "no-store",
     }
@@ -58,7 +58,7 @@ export async function POST(request: Request) {
   }
 
   const response = await fetch(
-    `{BACKEND_URL}/lounges`,
+    `${BACKEND_URL}/lounges`,
     {
       method: "POST",
       headers: {
