@@ -2,41 +2,93 @@
 
 CSLounge is a full-stack developer discussion platform built around focused technical communities called **lounges**.
 
-Users can create accounts, join discussions, publish posts, comment, vote on posts and comments, and browse conversations by topic.
+Users can create accounts, publish posts, comment on discussions, vote on posts and comments, create topic-based lounges, and manage their own activity through an account page.
 
-The project is built as a full-stack application with a Next.js frontend, Spring Boot backend, and PostgreSQL database.
+The application is built with a Next.js frontend, Spring Boot backend, and PostgreSQL database.
+
+## Live Deployment
+
+Frontend:
+
+```text
+https://cslounge.vercel.app
+```
+
+Backend:
+
+```text
+https://cslounge.onrender.com
+```
+
+Backend health check:
+
+```text
+https://cslounge.onrender.com/hello
+```
+
+Production infrastructure:
+
+```text
+Vercel   → Next.js frontend
+Render   → Spring Boot backend
+Supabase → PostgreSQL database
+```
 
 ## Features
 
 ### Authentication
+
 - User registration
 - Username/password login
 - BCrypt password hashing
 - Persistent server-side sessions
-- Session-based route protection
+- `JSESSIONID` cookie-based authentication
+- Session-aware route protection
 - Logout support
-- Light and dark themes
 
 ### Discussions
+
 - Create posts
-- Browse recent discussions
-- View individual posts
+- Browse the latest discussions
+- View individual post pages
+- Browse posts by lounge
 - Upvote and downvote posts
+- Withdraw or switch votes
 - Comment on posts
 - Upvote and downvote comments
-- Real-time UI refresh after interactions
+- Withdraw or switch comment votes
 
 ### Lounges
-- Topic-based discussion communities
+
+- Topic-based developer communities
 - Browse all lounges
-- View posts belonging to a specific lounge
-- Dynamic lounge routes using slugs
+- Create new lounges
+- Automatic URL slug generation
+- Case-insensitive duplicate lounge prevention
+- Dynamic lounge routes such as `/lounges/distributed-systems`
 
-Current examples include:
+### Account Activity
 
-- Systems
-- Databases
-- Cloud
+Authenticated users can view and manage their own activity.
+
+The account page includes:
+
+- personal post history
+- personal comment history
+- links back to discussions
+- delete own posts
+- delete own comments
+- ownership protection enforced by the backend
+
+### UI
+
+- Light and dark themes
+- Responsive layouts
+- Warm off-white / dark ink visual system
+- Burnt-orange accent color
+- Semantic vote interaction colors
+- Responsive discussion cards
+- Dynamic lounge navigation
 
 ## Tech Stack
 
@@ -54,11 +106,24 @@ Current examples include:
 - Spring Data JPA
 - Spring Security
 - Maven
+- Docker
 
 ### Database
 
+Development:
+
 - PostgreSQL 17
 - Docker
+
+Production:
+
+- PostgreSQL hosted on Supabase
+
+### Deployment
+
+- Vercel — Next.js frontend
+- Render — Dockerized Spring Boot backend
+- Supabase — PostgreSQL
 
 ## Architecture
 
@@ -66,30 +131,36 @@ Current examples include:
 Browser
    |
    v
-Next.js Frontend
+Next.js Frontend (Vercel)
    |
-   | /api/*
+   | browser actions via /api/*
+   | server components can call Spring directly
    v
-Next.js API Routes
-   |
-   v
-Spring Boot REST API
+Spring Boot REST API (Render)
    |
    v
-PostgreSQL
+PostgreSQL (Supabase)
 ```
 
-The browser communicates primarily with Next.js API routes.
+Next.js handles the user-facing application and proxies authenticated browser actions to Spring Boot.
 
-Next.js acts as a frontend server and proxy layer, forwarding authenticated requests to the Spring Boot backend.
+Spring Boot owns:
 
-Spring Boot owns the application logic, persistence layer, authentication sessions, posts, comments, lounges, and voting.
+- authentication
+- sessions
+- business logic
+- authorization and ownership checks
+- lounge creation
+- posts
+- comments
+- voting
+- persistence
 
-PostgreSQL stores application data.
+PostgreSQL stores all persistent application data.
 
 ## Core Data Model
 
-The application currently includes:
+CSLounge currently uses:
 
 ```text
 users
@@ -100,7 +171,7 @@ post_votes
 comment_votes
 ```
 
-Relationships include:
+Relationships:
 
 ```text
 User
@@ -114,20 +185,68 @@ Lounge
 
 Post
  ├── Comments
- └── Votes
+ └── Post Votes
 
 Comment
- └── Votes
+ └── Comment Votes
 ```
 
 A user can cast at most one vote per post or comment.
 
-Votes use:
+Vote values are stored as:
 
 ```text
  1 = upvote
 -1 = downvote
 ```
+
+Voting supports switching and withdrawing votes.
+
+## Authentication Flow
+
+CSLounge uses server-side Spring sessions.
+
+```text
+Login form
+    ↓
+Next.js API route
+    ↓
+Spring Boot
+    ↓
+Credentials validated
+    ↓
+HttpSession created
+    ↓
+JSESSIONID returned
+    ↓
+Browser stores session cookie
+    ↓
+Authenticated requests forward the session
+```
+
+Posts and comments do not trust an `authorId` supplied by the frontend.
+
+Instead, Spring Boot determines the authenticated user from the session.
+
+Ownership is also enforced on the backend when deleting posts or comments.
+
+## Lounge Slugs
+
+Users provide only a lounge name.
+
+For example:
+
+```text
+High Frequency Trading
+```
+
+Spring Boot generates:
+
+```text
+high-frequency-trading
+```
+
+Lounge names are checked case-insensitively so capitalization variants cannot create duplicate communities.
 
 ## Project Structure
 
@@ -135,6 +254,7 @@ Votes use:
 cslounge/
 │
 ├── app/
+│   ├── account/
 │   ├── api/
 │   ├── login/
 │   ├── register/
@@ -143,15 +263,20 @@ cslounge/
 │   └── page.tsx
 │
 ├── components/
+│   ├── account/
 │   ├── layout/
-│   ├── posts/
-│   └── lounges/
+│   ├── lounges/
+│   └── posts/
+│
+├── lib/
+│   └── backend.ts
 │
 ├── types/
 │
 ├── backend/
-│   ├── src/
-│   └── pom.xml
+│   ├── Dockerfile
+│   ├── pom.xml
+│   └── src/
 │
 ├── database/
 │   └── migrations/
@@ -191,23 +316,24 @@ User: cslounge
 Port: 5432
 ```
 
-Start the PostgreSQL container before starting the backend.
-
 ### 3. Apply database migrations
 
-Migration files are located in:
+Migration files are stored in:
 
 ```text
 database/migrations/
 ```
 
-Example:
+Apply them in numerical order.
+
+Example on Windows:
 
 ```powershell
-Get-Content database/migrations/003_comments_and_votes.sql | docker exec -i cslounge-postgres psql -U cslounge -d cslounge
+Get-Content database/migrations/003_comments_and_votes.sql |
+docker exec -i cslounge-postgres psql -U cslounge -d cslounge
 ```
 
-Apply migrations in numerical order.
+`001_initial.sql` also contains development seed data. For a clean production database, only the required schema should be applied rather than the development sample rows.
 
 ### 4. Configure Spring Boot
 
@@ -253,7 +379,7 @@ http://localhost:8080
 
 ### 6. Start the frontend
 
-From the project root:
+From the repository root:
 
 ```bash
 npm install
@@ -266,29 +392,7 @@ The application runs at:
 http://localhost:3000
 ```
 
-## Authentication Flow
-
-CSLounge currently uses server-side sessions.
-
-After successful login, Spring Boot creates an HTTP session and returns a `JSESSIONID` cookie.
-
-```text
-Login
-  ↓
-Next.js API route
-  ↓
-Spring Boot
-  ↓
-HttpSession created
-  ↓
-JSESSIONID cookie
-  ↓
-Authenticated requests
-```
-
-Posts and comments do not trust an `authorId` supplied by the frontend.
-
-Instead, the backend determines the current user from the authenticated session.
+`lib/backend.ts` uses the local Spring backend by default and reads `BACKEND_URL` in deployed environments.
 
 ## API Overview
 
@@ -304,23 +408,29 @@ GET  /users/me
 ### Posts
 
 ```text
-GET  /posts
-GET  /posts/{id}
-POST /posts
+GET    /posts
+GET    /posts/{id}
+GET    /posts/by-lounge
+GET    /posts/mine
+POST   /posts
+DELETE /posts/{id}
 ```
 
 ### Post Voting
 
 ```text
-PUT    /posts/{postId}/vote
-DELETE /posts/{postId}/vote
+PUT /posts/{postId}/vote
 ```
+
+Submitting the same vote again withdraws it. Submitting the opposite vote switches it.
 
 ### Comments
 
 ```text
-GET  /posts/{postId}/comments
-POST /posts/{postId}/comments
+GET    /posts/{postId}/comments
+POST   /posts/{postId}/comments
+GET    /comments/mine
+DELETE /comments/{commentId}
 ```
 
 ### Comment Voting
@@ -337,67 +447,114 @@ GET  /lounges/{slug}
 POST /lounges
 ```
 
-## UI
+## Production Deployment
 
-CSLounge uses a restrained visual system built around:
+### Frontend — Vercel
 
-- warm off-white surfaces
-- dark ink typography
-- burnt orange accents
-- responsive light and dark modes
+The repository root is deployed as a Next.js application.
 
-Voting interactions use semantic colors:
+Required environment variable:
 
-- green for upvotes
-- rose/red for downvotes
+```text
+BACKEND_URL=https://cslounge.onrender.com
+```
 
-## Current Development Status
+### Backend — Render
 
-Implemented:
+The Spring Boot backend is deployed as a Docker web service.
 
-- authentication
-- persistent sessions
-- protected home page
-- posts
-- post detail pages
-- lounges
-- comments
-- post voting
-- comment voting
-- light/dark theme
-- responsive discussion UI
+Render configuration:
 
-## Planned Features
+```text
+Root Directory: backend
+Dockerfile Path: ./Dockerfile
+Health Check Path: /hello
+```
 
-Next:
+Required environment variables:
 
-- account page
-- personal post history
-- personal comment history
-- delete own posts
-- cleaner user content management
-- automatic lounge slug generation
-- stronger route protection
-- production deployment
+```text
+SPRING_PROFILES_ACTIVE=prod
+DB_URL=jdbc:postgresql://<database-host>:<port>/<database>?sslmode=require
+DB_USER=<database-user>
+DB_PASSWORD=<database-password>
+```
 
-Later:
+Production Spring configuration uses Render's provided `PORT` environment variable.
 
-- user profiles
+### Database — Supabase
+
+Supabase hosts the production PostgreSQL database.
+
+Spring Boot connects directly using JDBC.
+
+Supabase Auth, Supabase client libraries, and the Supabase Data API are not used by CSLounge.
+
+The database remains behind the Spring Boot application layer.
+
+## Docker Deployment
+
+The backend contains:
+
+```text
+backend/Dockerfile
+```
+
+The image uses a multi-stage build:
+
+```text
+Java 21 JDK
+    ↓
+Maven package
+    ↓
+Spring Boot JAR
+    ↓
+Java 21 JRE
+    ↓
+Render web service
+```
+
+## Current Status
+
+The MVP is deployed and supports the complete core discussion flow:
+
+```text
+Register
+   ↓
+Log in
+   ↓
+Create / browse lounges
+   ↓
+Create posts
+   ↓
+Comment
+   ↓
+Vote
+   ↓
+Manage personal activity
+   ↓
+Delete owned content
+```
+
+## Future Work
+
+Future development may include:
+
+- real trending-lounge ranking
+- public user profiles
 - following
 - friend requests
 - notifications
 - personalized feeds
 - search
 - recommendations
-- real-time updates
-- Redis
+- Redis caching
 - WebSockets
+- real-time updates
 
 ## Design Goal
 
-CSLounge is intended to become more than a basic forum.
-
-The long-term goal is to combine focused technical communities with social-network functionality for developers, while keeping discussions organized around meaningful computer science and software engineering topics.
+CSLounge is intended to combine focused technical communities with social-network functionality for developers while keeping conversations organized around meaningful computer science and software engineering topics.
 
 ## Author
 
