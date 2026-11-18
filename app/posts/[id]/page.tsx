@@ -21,7 +21,7 @@ export default async function PostPage(
   const { id } = await params
 
   const response = await fetch(
-    `${BACKEND_URL}/api/posts/${id}`,
+    `${BACKEND_URL}/posts/${id}`,
     {
       cache: "no-store",
     }
@@ -35,8 +35,7 @@ export default async function PostPage(
     throw new Error("Failed to load post")
   }
 
-  const result: { data: PostDetail } = await response.json()
-  const post = result.data
+  const post : PostDetail = await response.json()
 
   return (
     <>

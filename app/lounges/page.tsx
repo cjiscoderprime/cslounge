@@ -33,7 +33,7 @@ export default async function LoungesPage() {
   }
 
   const loungesResponse = await fetch(
-    `${BACKEND_URL}/api/lounges`,
+    `${BACKEND_URL}/lounges`,
     {
       cache: "no-store",
     }
@@ -43,10 +43,9 @@ export default async function LoungesPage() {
     throw new Error("Failed to load lounges")
   }
 
-  const loungesJson: { data: Lounge[] } =
+  const lounges: Lounge[] =
     await loungesResponse.json()
 
-  const lounges = loungesJson.data
 
   return (
   <>

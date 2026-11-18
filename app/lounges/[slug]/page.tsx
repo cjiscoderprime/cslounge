@@ -31,7 +31,7 @@ export default async function LoungePage({
         fetch(`${BACKEND_URL}/lounges/${slug}`,{
             cache: "no-store",
         }),
-        fetch(`${BACKEND_URL}/api/posts?slug=${encodeURIComponent(slug)}`, {
+        fetch(`${BACKEND_URL}/posts/by-lounge?slug=${encodeURIComponent(slug)}`, {
             cache: "no-store",
         }),
     ])
@@ -44,15 +44,13 @@ export default async function LoungePage({
         throw new Error("Failed to load Lounge")
     }
 
-    const loungeJson: { data: Lounge } = await loungeResponse.json() 
-    const lounge = loungeJson.data
+    const lounge: Lounge = await loungeResponse.json() 
 
     if(!postsResponse.ok){
         throw new Error("Failed to load lounge posts")
     }
 
-    const postsJson: { data: PostFeedItem[]} = await postsResponse.json()
-    const posts = postsJson.data
+    const posts: PostFeedItem[] = await postsResponse.json()
 
     return (
         <>

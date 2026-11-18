@@ -51,10 +51,10 @@ export default async function Home() {
     }
   )
 
-  const postsJson: { data: PostFeedItem[] } =
+  const postsJson: PostFeedItem[] =
     await postsResponse.json()
 
-  const posts = postsJson.data.slice(0, 10)
+  const posts = postsJson.slice(0, 10)
 
   const loungesResponse = await fetch(
     `${BACKEND_URL}/lounges`,
@@ -63,10 +63,8 @@ export default async function Home() {
     }
   )
 
-  const loungesJson: { data: Lounge[] } =
+  const lounges: Lounge[] =
     await loungesResponse.json()
-
-  const lounges = loungesJson.data
 
   return (
   <>
