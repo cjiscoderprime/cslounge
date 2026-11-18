@@ -1,3 +1,5 @@
+import { BACKEND_URL } from "@/lib/backend"
+
 type LoungeRouteProps = {
     params: Promise<{
         slug: string
@@ -12,7 +14,7 @@ export async function GET(
         const { slug } = await params
     
         const response = await fetch(
-            `http://localhost:8080/lounges/${slug}`,
+            `${BACKEND_URL}/lounges/${slug}`,
             {
                 cache: "no-store",
             }

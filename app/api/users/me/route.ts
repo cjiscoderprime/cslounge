@@ -1,3 +1,5 @@
+import { BACKEND_URL } from "@/lib/backend"
+
 import { cookies } from "next/headers"
 
 export async function GET() {
@@ -19,7 +21,7 @@ export async function GET() {
     }
 
     const response = await fetch(
-      "http://localhost:8080/users/me",
+      `${BACKEND_URL}/users/me`,
       {
         headers: {
           Cookie: `JSESSIONID=${sessionId.value}`,

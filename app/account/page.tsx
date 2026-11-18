@@ -5,6 +5,8 @@ import Navbar from "@/components/layout/Navbar"
 import MyPosts from "@/components/account/MyPosts"
 import MyComments from "@/components/account/MyComments"
 
+import { BACKEND_URL } from "@/lib/backend"
+
 type User = {
   id: number
   username: string
@@ -44,7 +46,7 @@ export default async function AccountPage() {
     commentsResponse,
   ] = await Promise.all([
     fetch(
-      "http://localhost:8080/users/me",
+      `${BACKEND_URL}/users/me`,
       {
         headers: {
           Cookie: `JSESSIONID=${sessionId.value}`,
@@ -54,7 +56,7 @@ export default async function AccountPage() {
     ),
 
     fetch(
-      "http://localhost:8080/posts/mine",
+      `${BACKEND_URL}/posts/mine`,
       {
         headers: {
           Cookie: `JSESSIONID=${sessionId.value}`,
@@ -64,7 +66,7 @@ export default async function AccountPage() {
     ),
 
     fetch(
-      "http://localhost:8080/comments/mine",
+      `${BACKEND_URL}/comments/mine`,
       {
         headers: {
           Cookie: `JSESSIONID=${sessionId.value}`,

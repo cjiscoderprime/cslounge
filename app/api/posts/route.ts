@@ -1,13 +1,15 @@
 import { cookies } from "next/headers"
 
+import { BACKEND_URL } from "@/lib/backend"
+
 export async function GET(request: Request){
     try{
         const { searchParams } = new URL(request.url)
         const slug  = searchParams.get("slug")
 
         const springUrl = slug
-            ?`http://localhost:8080/posts/by-lounge?slug=${encodeURIComponent(slug)}`
-            :"http://localhost:8080/posts"
+            ?`${BACKEND_URL}/posts/by-lounge?slug=${encodeURIComponent(slug)}`
+            :`${BACKEND_URL}/posts`
 
         const response = await fetch(springUrl, {
             cache: "no-store",
@@ -71,7 +73,7 @@ export async function POST(request: Request){
         )
     }    
 
-    const response = await fetch("http://localhost:8080/posts", {
+    const response = await fetch(`${BACKEND_URL}/posts`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

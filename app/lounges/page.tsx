@@ -8,6 +8,8 @@ import type { Lounge } from "@/types/lounge"
 
 import CreateLoungeForm from "@/components/lounges/CreateLoungeForm"
 
+import { BACKEND_URL } from "@/lib/backend"
+
 export default async function LoungesPage() {
   const cookieStore = await cookies()
   const sessionId = cookieStore.get("JSESSIONID")
@@ -17,7 +19,7 @@ export default async function LoungesPage() {
   }
 
   const authResponse = await fetch(
-    "http://localhost:8080/users/me",
+    `${BACKEND_URL}/users/me`,
     {
       headers: {
         Cookie: `JSESSIONID=${sessionId.value}`,
@@ -31,7 +33,7 @@ export default async function LoungesPage() {
   }
 
   const loungesResponse = await fetch(
-    "http://localhost:3000/api/lounges",
+    `${BACKEND_URL}/api/lounges`,
     {
       cache: "no-store",
     }

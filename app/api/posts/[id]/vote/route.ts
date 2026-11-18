@@ -1,5 +1,7 @@
 import { cookies } from "next/headers"
 
+import { BACKEND_URL } from "@/lib/backend"
+
 export async function PUT(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -39,7 +41,7 @@ export async function PUT(
     }
 
     const response = await fetch(
-      `http://localhost:8080/posts/${id}/vote`,
+      `${BACKEND_URL}/posts/${id}/vote`,
       {
         method: "PUT",
         headers: {
@@ -114,7 +116,7 @@ export async function DELETE(
     }
 
     const response = await fetch(
-      `http://localhost:8080/posts/${id}/vote`,
+      `${BACKEND_URL}/posts/${id}/vote`,
       {
         method: "DELETE",
         headers: {

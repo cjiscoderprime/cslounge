@@ -5,7 +5,8 @@ import Link from "next/link"
 import Navbar from "@/components/layout/Navbar"
 import PostCard from "@/components/posts/PostCard"
 import CreatePostForm from "@/components/posts/CreatePostForm"
-import CreateLoungeForm from "@/components/lounges/CreateLoungeForm"
+
+import { BACKEND_URL } from "@/lib/backend"
 
 import type { Lounge } from "@/types/lounge"
 
@@ -28,7 +29,7 @@ export default async function Home() {
   }
 
   const authResponse = await fetch(
-    "http://localhost:8080/users/me",
+    `${BACKEND_URL}/users/me`,
     {
       headers: {
         Cookie: `JSESSIONID=${sessionId.value}`,
@@ -44,7 +45,7 @@ export default async function Home() {
   const currentUser = await authResponse.json()
 
   const postsResponse = await fetch(
-    "http://localhost:3000/api/posts",
+    `${BACKEND_URL}/posts`,
     {
       cache: "no-store",
     }
@@ -56,7 +57,7 @@ export default async function Home() {
   const posts = postsJson.data.slice(0, 10)
 
   const loungesResponse = await fetch(
-    "http://localhost:3000/api/lounges",
+    `${BACKEND_URL}/lounges`,
     {
       cache: "no-store",
     }

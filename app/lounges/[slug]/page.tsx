@@ -5,6 +5,8 @@ import PostCard from "@/components/posts/PostCard"
 
 import type { Lounge } from "@/types/lounge"
 
+import { BACKEND_URL } from "@/lib/backend"
+
 type PostFeedItem = {
     id: number
     title:string 
@@ -26,10 +28,10 @@ export default async function LoungePage({
     const {slug} = await params
 
     const [loungeResponse, postsResponse] = await Promise.all([
-        fetch(`http://localhost:3000/api/lounges/${slug}`,{
+        fetch(`${BACKEND_URL}/lounges/${slug}`,{
             cache: "no-store",
         }),
-        fetch(`http://localhost:3000/api/posts?slug=${encodeURIComponent(slug)}`, {
+        fetch(`${BACKEND_URL}/api/posts?slug=${encodeURIComponent(slug)}`, {
             cache: "no-store",
         }),
     ])

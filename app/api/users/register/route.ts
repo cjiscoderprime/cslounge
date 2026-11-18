@@ -1,3 +1,5 @@
+import { BACKEND_URL } from "@/lib/backend"
+
 export async function POST(request: Request) {
     try{
         const body = await request.json()
@@ -16,7 +18,7 @@ export async function POST(request: Request) {
             )
         }
         const response = await fetch(
-            "http://localhost:8080/users/register",
+            `${BACKEND_URL}/users/register`,
             {
                 method: "POST",
                 headers: {

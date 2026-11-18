@@ -1,4 +1,5 @@
 import { cookies } from "next/headers"
+import { BACKEND_URL } from "@/lib/backend"
 
 export async function POST() {
     try {
@@ -7,7 +8,7 @@ export async function POST() {
 
         if (sessionId) {
             await fetch(
-                "http://localhost:8080/users/logout",
+                `${BACKEND_URL}/users/logout`,
                 {
                     method: "POST",
                     headers: {

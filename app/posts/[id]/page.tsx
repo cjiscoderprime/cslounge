@@ -3,6 +3,8 @@ import { notFound } from "next/navigation"
 import Navbar from "@/components/layout/Navbar"
 import PostInteractions from "@/components/posts/PostInteractions"
 
+import { BACKEND_URL } from "@/lib/backend"
+
 type PostDetail = {
   id: number
   title: string
@@ -19,7 +21,7 @@ export default async function PostPage(
   const { id } = await params
 
   const response = await fetch(
-    `http://localhost:3000/api/posts/${id}`,
+    `${BACKEND_URL}/api/posts/${id}`,
     {
       cache: "no-store",
     }

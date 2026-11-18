@@ -1,3 +1,5 @@
+import { BACKEND_URL } from "@/lib/backend"
+
 export async function GET(
     request: Request,
     { params }: { params: Promise<{ id: string }> }
@@ -6,7 +8,7 @@ export async function GET(
         const {id} = await params
 
         const response = await fetch(
-            `http://localhost:8080/posts/${id}`,
+            `${BACKEND_URL}/posts/${id}`,
             {
                 cache: "no-store",
             }

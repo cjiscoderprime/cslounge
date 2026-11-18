@@ -1,5 +1,7 @@
 import { cookies } from "next/headers"
 
+import { BACKEND_URL } from "@/lib/backend"
+
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -8,7 +10,7 @@ export async function GET(
     const { id } = await params
 
     const response = await fetch(
-      `http://localhost:8080/posts/${id}/comments`,
+      `${BACKEND_URL}/posts/${id}/comments`,
       {
         cache: "no-store",
       }
@@ -78,7 +80,7 @@ export async function POST(
     }
 
     const response = await fetch(
-      `http://localhost:8080/posts/${id}/comments`,
+      `${BACKEND_URL}/posts/${id}/comments`,
       {
         method: "POST",
         headers: {

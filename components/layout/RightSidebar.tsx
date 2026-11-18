@@ -1,5 +1,7 @@
 import Link from "next/link"
 
+import { BACKEND_URL } from "@/lib/backend"
+
 type Lounge = {
   id: number
   name: string
@@ -8,7 +10,7 @@ type Lounge = {
 
 export default async function RightSidebar() {
   const response = await fetch(
-    "http://localhost:8080/lounges",
+    `${BACKEND_URL}/lounges`,
     {
       cache: "no-store",
     }

@@ -1,5 +1,7 @@
 import { cookies } from "next/headers"
 
+import { BACKEND_URL } from "@/lib/backend"
+
 export async function GET() {
   const cookieStore = await cookies()
   const sessionId = cookieStore.get("JSESSIONID")
@@ -12,7 +14,7 @@ export async function GET() {
   }
 
   const response = await fetch(
-    "http://localhost:8080/posts/mine",
+    `${BACKEND_URL}/posts/mine`,
     {
       headers: {
         Cookie: `JSESSIONID=${sessionId.value}`,
@@ -63,7 +65,7 @@ export async function DELETE(request: Request) {
   }
 
   const response = await fetch(
-    `http://localhost:8080/posts/${postId}`,
+    `${BACKEND_URL}/posts/${postId}`,
     {
       method: "DELETE",
       headers: {
